@@ -1,6 +1,7 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
+
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -10,4 +11,14 @@ const pool = new Pool({
   allowExitOnIdle: true,
 });
 
-module.exports= { Pool }
+
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+  } else {
+      console.log('Conexión exitosa:', res.rows);
+  }
+  pool.end();
+});
+
+module.exports= { pool }

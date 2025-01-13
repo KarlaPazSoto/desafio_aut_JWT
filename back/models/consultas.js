@@ -1,11 +1,11 @@
-const { Pool } = require('../config/config');
+const { pool } = require('../config/config');
 
 const createUser = async (email, password, rol, lenguage) => {
     const query = 'INSERT INTO usuarios (email, password, rol, lenguage) VALUES ($1, $2, $3, $4) RETURNING *';
     const values = [email, password, rol, lenguage];
 
     try{
-        const result = await Pool.query(query, values);
+        const result = await pool.query(query, values);
         console.log('Usuario creado.');
         return result;
     }catch(error){
@@ -16,7 +16,7 @@ const createUser = async (email, password, rol, lenguage) => {
 
 const getUsers = async () => {
     try{
-        const { rows } = await Pool.query('SELECT * FROM usuarios');
+        const { rows } = await pool.query('SELECT * FROM usuarios');
         console.log(rows);
         return rows;
     }catch(error){
@@ -25,4 +25,14 @@ const getUsers = async () => {
     }
 };
 
-module.exports = { createUser, getUsers };
+const getUserByEmail = async (email) => {
+    try{
+        const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+        return result;
+    }catch(error){
+        console.error('Error al obtener el usuario:', error);
+        throw error;
+    }
+};
+
+module.exports = { createUser, getUsers, getUserByEmail };
